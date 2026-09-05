@@ -18,12 +18,19 @@ export const SolarServiceList: React.FC<ListProps> = ({ onSelect, onGoToCart, ca
 
   const filtered = useMemo(() => {
     return MOCK_SERVICES.filter(item => {
+      // 1. Исключаем логически удаленные элементы (IsDeleted: true)
       if (item.IsDeleted === true) return false;
 
+      // 2. Проверка по названию модели (приводим к регистронезависимому виду)
       const matchesSearch = item.ModelName.toLowerCase().includes(search.toLowerCase());
+
+      // 3. Проверка по цене (если инпут пустой — пропускаем, иначе сравниваем числа)
       const matchesPrice = maxPrice === '' || item.Price <= parseFloat(maxPrice);
+
+      // 4. Проверка по типу оборудования (если тип не выбран — пропускаем)
       const matchesType = selectedType === '' || item.Type === selectedType;
 
+      // Карточка отобразится, только если прошли ВСЕ три фильтра
       return matchesSearch && matchesPrice && matchesType;
     });
   }, [search, maxPrice, selectedType]);
